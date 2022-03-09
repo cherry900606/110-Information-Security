@@ -17,11 +17,14 @@ def caeser_decrypt(ciphertext, key):
 
 def vernam_decrypt(ciphertext, key):
     plaintext = ""
-    for i in range(len(key)):
-        if ciphertext[i].isalpha():
-            plaintext += chr(((ord(ciphertext[i])-ord('A'))^(ord(key[i])-ord('A'))) + ord('A'))
-        else:
-            plaintext += ciphertext[i]
+    index = 0
+    for i in range(len(ciphertext)):
+        # 如果key不夠長，就拿解出的明文加上去
+        if index >= len(key):
+            key += plaintext[index - len(key)]
+        plaintext += chr(((ord(ciphertext[i])-ord('A'))^(ord(key[index])-ord('A'))) + ord('A'))
+        index += 1
+        
     return plaintext.lower()
 
 def rail_fence_decrypt(ciphertext, key):
