@@ -18,6 +18,7 @@ def caeser_decrypt(ciphertext, key):
 def vernam_decrypt(ciphertext, key):
     plaintext = ""
     index = 0
+    key = key.upper()
     for i in range(len(ciphertext)):
         # 如果key不夠長，就拿解出的明文加上去
         if index >= len(key):
@@ -108,7 +109,8 @@ def row_transposition_decrypt(ciphertext, key):
 
 def playfair_decrypt(ciphertext, key):
     plaintext = ""
-
+    key = key.upper()
+    
     # key 填入 matrix
     matrix = np.ones(shape=(25), dtype=str)
     for index, c in enumerate(key):
