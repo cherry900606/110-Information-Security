@@ -99,9 +99,10 @@ def vernam_encryption(p, k):
         pList.append(ord(i) - 65)
     
     ## key to binary ##
-    tmpK = k
+    cntK = 0
     while len(k) < len(p):
-        k += tmpK
+        k += p[cntK]
+        cntK += 1
     
     for i in k:
         kList.append(ord(i) - 65)
