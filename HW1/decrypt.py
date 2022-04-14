@@ -17,14 +17,11 @@ def caeser_decrypt(ciphertext, key):
 
 def vernam_decrypt(ciphertext, key):
     plaintext = ""
-    index = 0
     key = key.upper()
+
     for i in range(len(ciphertext)):
-        # 如果key不夠長，就拿解出的明文加上去
-        if index >= len(key):
-            key += plaintext[index - len(key)]
-        plaintext += chr(((ord(ciphertext[i])-ord('A'))^(ord(key[index])-ord('A'))) + ord('A'))
-        index += 1
+        plaintext += chr(((ord(ciphertext[i])-ord('A'))^(ord(key[i])-ord('A'))) + ord('A'))
+        key += plaintext[-1]
         
     return plaintext.lower()
 
@@ -88,23 +85,25 @@ def row_transposition_decrypt(ciphertext, key):
     m = dict(enumerate(str(key)))
     inv_map = {int(v): k for k, v in m.items()}
 
-    # 填矩陣
-    minus = 0
+    matrix = np.transpose(matrix)
+    row_trans = {}
     for i in range(width):
-        col = int(str(key)[i])
-        start = (col - 1) * height
+        row_trans[key[i]]=matrix[i]
 
+    index=0;
+    for i in range(1,width+1):
         for j in range(height):
-            if matrix[j][inv_map[col]] != '1':
-                matrix[j][inv_map[col]] = ciphertext[start + j - minus]
+            if row_trans[str(i)][j] == '0' :
+                row_trans[str(i)][j]=ciphertext[index]
+                index += 1
             else:
-                minus += 1
-
-    # 還原原始字串
+                break
     for i in range(height):
         for j in range(width):
-            if matrix[i][j] != '1':
-                plaintext += matrix[i][j]
+            if matrix[j][i]!='1':
+                plaintext +=matrix[j][i]
+            else:
+                break
     return plaintext.lower()
 
 def playfair_decrypt(ciphertext, key):
@@ -113,11 +112,12 @@ def playfair_decrypt(ciphertext, key):
     
     # key 填入 matrix
     matrix = np.ones(shape=(25), dtype=str)
-    for index, c in enumerate(key):
+    index = 0
+    for c in key:
         if c not in matrix:
             matrix[index] = c
+            index += 1
     matrix = matrix.reshape(5,5)
-
     # 填完剩下的 matrix
     flag = 0
     for i in range(5):
@@ -127,8 +127,6 @@ def playfair_decrypt(ciphertext, key):
             if matrix[i][j] == '1':
                 matrix[i][j] = chr(ord('A') + flag)
                 flag += 1
-
-    #print(matrix)
 
     # 開始解密
     while len(ciphertext):
