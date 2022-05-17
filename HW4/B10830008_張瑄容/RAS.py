@@ -1,5 +1,3 @@
-from ast import arg
-import imp
 from random import randint
 import random
 from sys import argv
